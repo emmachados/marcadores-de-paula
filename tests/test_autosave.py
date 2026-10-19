@@ -103,7 +103,7 @@ def test_failed_autosave_keeps_last_checkpoint_and_retries(qtbot, tmp_path, resu
     assert load_review(output)[0]['segments'][0]['text'] == 'First revision'
     monkeypatch.setattr(storage, 'atomic_write', original)
     qtbot.waitUntil(lambda: load_review(output)[0]['segments'][0]['text'] == 'Second revision')
-    assert not widget.dirty
+    qtbot.waitUntil(lambda: not widget.dirty)
 
 
 def test_abrupt_exit_recovers_uncommitted_editor(qtbot, tmp_path, result):
