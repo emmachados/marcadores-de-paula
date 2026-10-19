@@ -19,6 +19,8 @@ uv pip compile requirements-engine.txt --python-version 3.11 --python-platform x
 uv pip compile requirements-engine-windows-cuda.in --python-version 3.11 --python-platform x86_64-pc-windows-msvc --generate-hashes --no-build -o requirements-engine-windows-cuda.txt
 ```
 
+The worker runs with the application folder on `PYTHONPATH`, so packages bundled with the application are imported ahead of the engine's copies. `requirements-desktop.txt` therefore pins every package it shares with the engine locks to the lock's version, and `tests/test_setup.py` fails if they differ. Update those pins whenever a lock is regenerated.
+
 Recognition runs with CPU `int8` and batch size 1, or NVIDIA `float16` and batch size 4.
 
 The Silero voice-activity model is loaded through Torch Hub with `source='local'` when its cache is complete, meaning nonempty `hubconf.py`, `src/silero_vad/utils_vad.py` and `src/silero_vad/data/silero_vad.jit` under `snakers4_silero-vad_main` or `snakers4_silero-vad_master`. This skips the GitHub request that the WhisperX 3.8.6 constructor makes before checking its cache, and keeps its onset of 0.500 and 30-second chunks. Without a complete cache, WhisperX downloads the model on first use.

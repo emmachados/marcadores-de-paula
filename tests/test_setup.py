@@ -71,6 +71,19 @@ def test_windows_installs_hashed_locks_and_checks_every_version(monkeypatch):
         assert commands[-1][-2:] == ['transcript_desk.engine_check', str(runtime.engine_lock(device))]
 
 
+
+def test_desktop_requirements_match_every_engine_lock():
+    from transcript_desk.engine_check import locked_versions
+    root = Path(__file__).resolve().parents[1]
+    normal = lambda versions: {name.lower().replace('_', '-'): value for name, value in versions.items()}
+    desktop = normal(locked_versions(root / 'requirements-desktop.txt'))
+    assert desktop['websockets'] == '17.2'
+    for lock in ('requirements-engine-windows-cpu.txt', 'requirements-engine-windows-cuda.txt',
+                 'requirements-engine-macos-arm64.txt'):
+        engine = normal(locked_versions(root / lock))
+        assert {name: (desktop[name], engine[name]) for name in desktop.keys() & engine.keys()
+                if desktop[name] != engine[name]} == {}, lock
+
 def test_error_448_is_visible_and_saved(qtbot, tmp_path, monkeypatch):
     import transcript_desk.setup_dialog as module
     script = tmp_path / "fail.py"
