@@ -14,11 +14,11 @@ Download `MarcadoresDePaula-Setup-<version>-stock.exe` from the [latest release]
 
 ### Mac
 
-There is no released Mac package yet. The application builds on Apple silicon for macOS 26; see [building](docs/building.md).
+Download `MarcadoresDePaula-<version>-macOS-arm64-stock.dmg` from the [latest release](https://github.com/emmachados/marcadores-de-paula/releases/latest), open it and drag Marcadores de Paula to Applications. The application needs a Mac with Apple silicon and macOS 26 or later; there is no Intel version, because the PyTorch release the transcription engine needs has no Intel Mac build. The application is not notarized by Apple, so the first time it is opened macOS reports that Apple could not verify it is free of malware. Choose Done, open System Settings → Privacy & Security, select Open Anyway next to the message about Marcadores de Paula and confirm with your password. Later starts open normally. Each release lists the disk image's SHA-256 checksum. To update, replace the application in Applications with the new one. The queue, recording folders and reviews are kept.
 
 ## First start
 
-Open Setup and install the processing engine, either CPU or NVIDIA. The application downloads its own Python runtime and dependencies, so no separate Python installation or terminal is needed. The engine and the models fetched on first use take several gigabytes. No NVIDIA card is needed for CPU mode. The NVIDIA engine installs and imports correctly in the Windows build, but transcription on a GPU has not been tested.
+Open Setup and install the processing engine: CPU, or on Windows also NVIDIA. The application downloads its own Python runtime and dependencies, so no separate Python installation or terminal is needed. The engine and the models fetched on first use take several gigabytes. No NVIDIA card is needed for CPU mode. The NVIDIA engine installs and imports correctly in the Windows build, but transcription on a GPU has not been tested.
 
 Speaker separation uses the pyannote [speaker-diarization-community-1](https://huggingface.co/pyannote/speaker-diarization-community-1) model, which requires a free Hugging Face account. In Setup, Open model access page leads to the conditions to accept, and Create a read token to the page where the token is made. Paste the token into Setup, use Check model access to confirm that it works, and choose Save and close. The token stays in memory for the session, or in the operating system's credential store if "Remember the token" is selected. It is never written to queue files or transcript metadata. Transcription works without a token; the speaker stage is then skipped with a warning.
 
@@ -65,7 +65,7 @@ Find candidates lists literal occurrences of common Spanish marker forms and adj
 
 ## Output
 
-Each recording gets its own folder under the chosen output location (by default `Documents\Marcadores de Paula` on Windows). `source.json` records the source, the settings, the input's SHA-256 and the versions of the processing libraries. `asr-original.json` keeps the recogniser's output before alignment, `result.json` the aligned draft, and `reviewed.json` and `autosave.json` your review, from Save review and from automatic saves; the newer of the two is opened. Export… writes the chosen formats to a new timestamped folder each time, so earlier exports are never overwritten.
+Each recording gets its own folder under the chosen output location (by default `Marcadores de Paula` in the Documents folder). `source.json` records the source, the settings, the input's SHA-256 and the versions of the processing libraries. `asr-original.json` keeps the recogniser's output before alignment, `result.json` the aligned draft, and `reviewed.json` and `autosave.json` your review, from Save review and from automatic saves; the newer of the two is opened. Export… writes the chosen formats to a new timestamped folder each time, so earlier exports are never overwritten.
 
 | Format | Content |
 | --- | --- |

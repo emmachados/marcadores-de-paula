@@ -61,6 +61,7 @@ def run_setup_save_check(application, window, report_path):
         except StopIteration:
             finish(True)
             return
+        device = 'cuda' if remember and sys.platform != 'darwin' else 'cpu'
 
         def click_save():
             dialog = QApplication.activeModalWidget()
@@ -68,7 +69,7 @@ def run_setup_save_check(application, window, report_path):
             assert callable(dialog.done)
             dialog.token.setText('setup-verification-placeholder')
             dialog.remember.setChecked(remember)
-            dialog.device.setCurrentIndex(dialog.device.findData('cuda' if remember else 'cpu'))
+            dialog.device.setCurrentIndex(dialog.device.findData(device))
             dialog.save_button.click()
 
         QTimer.singleShot(100, click_save)
@@ -78,7 +79,7 @@ def run_setup_save_check(application, window, report_path):
         assert window.isVisible()
         assert window.remember_token == remember
         assert window.settings.value('remember_token', type=bool) == remember
-        assert window.device == ('cuda' if remember else 'cpu')
+        assert window.device == device
         assert bool(credentials.values) == remember
 
         def check_disposal():

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import sys
 import time
 from datetime import datetime
 
@@ -51,10 +52,12 @@ class SetupDialog(QDialog):
         layout.addWidget(label("Processing engine"))
         self.device = QComboBox()
         self.device.addItem("CPU · works without an NVIDIA graphics card", "cpu")
-        self.device.addItem("NVIDIA GPU · requires a compatible card and driver", "cuda")
+        if sys.platform != "darwin":
+            self.device.addItem("NVIDIA GPU · requires a compatible card and driver", "cuda")
         self.device.setCurrentIndex(max(0, self.device.findData(parent.device)))
         layout.addWidget(self.device)
-        layout.addWidget(label("The CPU option can take a long time with large models. The NVIDIA option installs CUDA-enabled libraries. Installation and the first transcription can download several gigabytes; keep this window open.", True))
+        nvidia = "" if sys.platform == "darwin" else " The NVIDIA option installs CUDA-enabled libraries."
+        layout.addWidget(label(f"The CPU option can take a long time with large models.{nvidia} Installation and the first transcription can download several gigabytes; keep this window open.", True))
         row = QHBoxLayout()
         self.engine_status = label("")
         self.install = QPushButton("Install engine")

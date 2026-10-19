@@ -1,6 +1,11 @@
 name: Mac desktop
 on:
   workflow_dispatch:
+    inputs:
+      upload-draft:
+        description: Upload the verified disk image to the matching existing draft release
+        type: boolean
+        default: false
   push:
     tags: ['v*']
 permissions:
@@ -8,6 +13,8 @@ permissions:
 jobs:
   apple-silicon:
     runs-on: macos-26
+    permissions:
+      contents: write
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
@@ -33,7 +40,13 @@ jobs:
       - name: Build stock application and disk image
         run: .venv/bin/python packaging/build-macos.py
       - name: Verify relocated application
-        run: .venv/bin/python packaging/verify-macos.py
+        run: .venv/bin/python packaging/verify-macos.py --setup
+      # Release assets do not count toward the Actions artifact storage quota.
+      - name: Upload verified disk image to the existing draft
+        if: github.event_name == 'workflow_dispatch' && inputs.upload-draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash packaging/upload-draft.sh stock release/macos-*/MarcadoresDePaula-*.dmg release/macos-*/MarcadoresDePaula-*.dmg.sha256
       - name: Preserve package and verification
         if: always()
         continue-on-error: true

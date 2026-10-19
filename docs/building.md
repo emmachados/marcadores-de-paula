@@ -95,7 +95,7 @@ bash packaging/prepare-macos-tools.sh
 
 `verify-macos.py` copies the application to a separate location and runs its interface, playback, review, workspace, editor, processing-fault and preservation checks with a system-only `PATH`, verifying the signature before and after. `--setup` adds a fresh CPU-engine installation. `build-macos.py` accepts `--model-manifest` and `--model-archive` to bundle a model pack, as on Windows, and `verify-macos.py --model-manifest` checks that it is selected.
 
-The build has an ad-hoc signature and is not notarized; a copy downloaded from elsewhere is blocked by Gatekeeper until it is allowed in System Settings. `.github/workflows/macos.yml` runs the tests, builds and verifies the application on the `macos-26` runner, and keeps the disk image and reports as an artifact.
+The build has an ad-hoc signature and is not notarized; a copy downloaded from elsewhere is blocked by Gatekeeper until it is allowed in System Settings. `.github/workflows/macos.yml` runs on version tags and on manual dispatch. It runs the tests, builds the application on the `macos-26` runner, verifies it with `--setup`, and keeps the disk image and reports as the artifact `MarcadoresDePaula-macOS-arm64-stock`. With the `upload-draft` input set, it attaches the disk image, its checksum and a verification archive to the matching draft release, under the same conditions as the Windows workflow.
 
 ## Running checks from source
 
@@ -107,7 +107,7 @@ QT_QPA_PLATFORM=offscreen .venv/bin/python -m pytest -q
 .venv/bin/python run_app.py --preservation-smoke-test --smoke-report build/verification/preservation.json
 ```
 
-Each check exits with a non-zero status on failure and writes a JSON report with `ok: true` on success. `scripts/capture_readme.py` renders the screenshots in `docs/images/` from a synthetic interview and generated audio; it needs FFmpeg on `PATH`. `packaging/verify-macos-transcription.py` prepares transcription jobs for public test recordings with the installed Mac application code, and with `--run` transcribes them once Setup has installed an engine.
+Each check exits with a non-zero status on failure and writes a JSON report with `ok: true` on success. `scripts/capture_readme.py` renders the screenshots in `docs/images/` from a synthetic interview and generated audio; it needs FFmpeg on `PATH`. `packaging/verify-macos-transcription.py` prepares transcription jobs for public test recordings with the installed Mac application code, and with `--run` transcribes them once Setup has installed an engine. The default recording is `build/verification/jfk.flac`, the sample from the [Whisper repository](https://github.com/openai/whisper/blob/main/tests/jfk.flac); `--fixture` takes another file.
 
 ## Data folders during development
 

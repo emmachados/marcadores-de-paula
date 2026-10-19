@@ -266,13 +266,15 @@ def test_save_and_close_preserves_main_window_and_both_token_modes(qtbot, tmp_pa
     parent = window(qtbot, tmp_path)
     parent.remember_token = False
     for remember in (False, True, False):
+        device = 'cuda' if remember and sys.platform != 'darwin' else 'cpu'
+
         def save():
             dialog = QApplication.activeModalWidget()
             assert isinstance(dialog, SetupDialog)
             assert callable(dialog.done)
             dialog.token.setText('test-token-not-a-credential')
             dialog.remember.setChecked(remember)
-            dialog.device.setCurrentIndex(dialog.device.findData('cuda' if remember else 'cpu'))
+            dialog.device.setCurrentIndex(dialog.device.findData(device))
             dialog.save_button.click()
         QTimer.singleShot(10, save)
         parent.setup_button.click()
@@ -281,8 +283,15 @@ def test_save_and_close_preserves_main_window_and_both_token_modes(qtbot, tmp_pa
         assert parent.token == 'test-token-not-a-credential'
         assert parent.remember_token is remember
         assert parent.settings.value('remember_token', type=bool) is remember
-        assert parent.device == ('cuda' if remember else 'cpu')
+        assert parent.device == device
     assert [action for action, _ in calls] == ['store', 'delete']
+
+
+def test_setup_offers_nvidia_engine_only_outside_mac(qtbot, tmp_path):
+    dialog = SetupDialog(window(qtbot, tmp_path))
+    qtbot.addWidget(dialog)
+    devices = [dialog.device.itemData(index) for index in range(dialog.device.count())]
+    assert devices == (['cpu'] if sys.platform == 'darwin' else ['cpu', 'cuda'])
 
 
 def test_credential_failure_keeps_setup_open_and_preserves_settings(qtbot, tmp_path, monkeypatch):

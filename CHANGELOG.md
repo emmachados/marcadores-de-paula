@@ -1,12 +1,13 @@
 # Changelog
 
-From 0.9.0, Windows installers are attached to each [GitHub release](https://github.com/emmachados/marcadores-de-paula/releases), with SHA-256 checksums and the verification records from the build that produced them. Install a newer version over an older one; the queue, recording folders and saved reviews are kept.
+From 0.9.0, the Windows installer and the Mac disk image are attached to each [GitHub release](https://github.com/emmachados/marcadores-de-paula/releases), with SHA-256 checksums and the verification records from the builds that produced them. On Windows, install a newer version over an older one; on a Mac, replace the application in Applications. The queue, recording folders and saved reviews are kept.
 
-## 0.9.0 (unreleased)
+## 0.9.0 (19 October 2026)
 
-First release from this repository. Earlier installers were distributed privately.
+First release from this repository, and the first with a Mac download, for Apple silicon on macOS 26 or later. Earlier installers were distributed privately.
 
 - When the engine's Python can no longer start, for example because the Python installation it was created from has been removed, Start queue now stops before processing and shows the Windows error. Earlier versions reported the engine as ready, and every recording then failed within a second at "Processing worker startup". Repair engine in Setup rebuilds the environment in this case and keeps downloaded models.
+- On a Mac, Setup offers only the CPU engine. It previously also listed the NVIDIA engine, which macOS cannot run.
 - A worker that exits without a structured error now has its last output saved in the error details.
 - The worker runs from the application's own job folder and ignores Python modules in the folder the application was started from.
 - The Windows installer bundles an LGPL build of FFmpeg 7.1.3 compiled from the official source, and ships that source and the build recipe with it. Earlier Windows installers bundled a third-party GPL build.
