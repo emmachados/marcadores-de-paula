@@ -1,0 +1,7 @@
+# Rebuilding the Cocoa accessibility component
+
+This file is copied into the Mac application together with the sources of its Cocoa platform plugin; in the repository, `packaging/prepare-macos-qt.py` fetches and builds them. The copy in the application contains the Qt source archive, the proposed upstream patch, the licences, the archive hashes and the build recipe. The original SDK download is identified by URL and SHA-256 in `manifest.json`. The patch has not been merged upstream.
+
+Copy this whole directory to a writable location on an Apple silicon Mac running macOS 26 or later with Xcode command-line tools installed. Create a Python environment and install `cmake==4.4.4 ninja==1.13.2`. Run that environment's Python with `prepare-macos-qt.py`; `--cmake` and `--ninja` accept explicit executable paths. The script uses the supplied source archive, downloads the matching SDK when necessary, verifies the inputs, applies the patch and compiles the plugin. It writes the result and its new hash to `build/qt6120-cocoa-package`.
+
+The resulting `libqcocoa.dylib` uses the application's flattened Qt library names. Replace `Contents/Frameworks/PySide6/Qt/plugins/platforms/libqcocoa.dylib` in a copy of the application, then sign that copy with `codesign --force --deep --sign - 'Marcadores de Paula.app'`. A changed component invalidates the original recorded component hash; regenerate the application with `packaging/build-macos.py` in the project checkout when producing a verified package.

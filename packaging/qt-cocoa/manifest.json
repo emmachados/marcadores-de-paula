@@ -1,0 +1,15 @@
+{
+  "qt_version": "6.12.0",
+  "patch_url": "https://codereview.qt-project.org/c/qt/qtbase/+/772484",
+  "patch_commit": "de050555112940ed643dfa7bd9ed16470adc5a09",
+  "patch_status": "upstream proposed, not merged; local backport",
+  "patch_sha256": "b2ef8d37a293566657c0052d4d64d9ab8b204c0f44ff45d5253d9b306db1e024",
+  "source_url": "https://download.qt.io/archive/qt/6.12/6.12.0/submodules/qtbase-everywhere-src-6.12.0.tar.xz",
+  "source_sha256": "a951bd163c7b80fc6b8c88d7668fb56abf91c152373e13c10666763238131307",
+  "sdk_url": "https://download.qt.io/online/qtsdkrepository/mac_x64/desktop/qt6_6120/qt6_6120/qt.qt6.6120.clang_64/6.12.0-0-202609280346qtbase-MacOS-MacOS_26-Clang-MacOS-MacOS_26-X86_64-ARM64.7z",
+  "sdk_sha256": "1e0df66ed17ae97997971ff481983c5c0b7497a52ef52f699725701401fd80ee",
+  "cmake_version": "4.4.4",
+  "ninja_version": "1.13.2",
+  "deployment_target": "26.0",
+  "architecture": "arm64"
+}

@@ -1,0 +1,48 @@
+name: Mac desktop
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+jobs:
+  apple-silicon:
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          architecture: arm64
+      - name: Build environment
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install -r requirements-desktop.txt
+          .venv/bin/python -m pip install cmake==4.4.4 ninja==1.13.2
+      - name: Prepare standalone media tools
+        run: |
+          bash packaging/prepare-macos-tools.sh
+          echo "$PWD/build/macos-ffmpeg/bin" >> "$GITHUB_PATH"
+      - name: Regression tests
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: .venv/bin/python -m pytest -q
+      - name: Build Cocoa accessibility repair from verified Qt sources
+        run: .venv/bin/python packaging/prepare-macos-qt.py
+      - name: Build stock application and disk image
+        run: .venv/bin/python packaging/build-macos.py
+      - name: Verify relocated application
+        run: .venv/bin/python packaging/verify-macos.py
+      - name: Preserve package and verification
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: MarcadoresDePaula-macOS-arm64-stock
+          path: |
+            release/macos-*/**/*.dmg
+            release/macos-*/**/*.sha256
+            release/macos-*/**/*.json
+            release/macos-*/**/*.png
+            release/macos-*/**/*.log

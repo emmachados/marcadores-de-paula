@@ -1,0 +1,13 @@
+PySide6-Essentials==6.12.0; sys_platform == 'darwin'
+PySide6-Addons==6.12.0; sys_platform == 'darwin'
+PySide6-Essentials==6.12.0; sys_platform != 'darwin'
+PySide6-Addons==6.12.0; sys_platform != 'darwin'
+keyring==25.7.0
+python-docx==1.2.0
+yt-dlp[default]==2026.8.19
+uv==0.13.0
+pyinstaller==6.22.3
+pytest==9.1.1
+pytest-qt==4.5.0
+# Required by the comparison tests run before packaging.
+numpy==2.4.6

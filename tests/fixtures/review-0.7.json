@@ -1,0 +1,7 @@
+{
+  "metadata": {"title": "Earlier recording", "source": "fixture.wav", "review_saved_at": "2026-10-01T10:00:00+00:00"},
+  "speaker_names": {"SPEAKER_00": "Participant"},
+  "annotation_schema": 1,
+  "segments": [{"start": 0.0, "end": 2.0, "speaker": "SPEAKER_00", "text": "Bueno, yes."}],
+  "annotations": [{"id": "legacy-annotation", "segment": 0, "start_char": 0, "end_char": 5, "quote": "Bueno", "text_sha256": "replaced-in-test", "label": "Discourse marker", "function": "Unspecified", "status": "confirmed", "origin": "manual", "note": "Earlier note", "start": 0.0, "end": 2.0, "timing": "turn"}]
+}

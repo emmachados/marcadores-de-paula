@@ -1,0 +1,154 @@
+name: Build Windows application
+on:
+  workflow_dispatch:
+    inputs:
+      upload-draft:
+        description: Upload verified installers to the matching existing draft release
+        type: boolean
+        default: false
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+jobs:
+  ffmpeg:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    outputs:
+      key: ${{ steps.key.outputs.key }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: key
+        run: echo "key=windows-ffmpeg-ubuntu-24.04-${{ hashFiles('packaging/build-ffmpeg-windows.sh', 'packaging/windows-tools.json') }}" >> "$GITHUB_OUTPUT"
+      # The cache passes the build to the Windows job without using artifact storage.
+      - uses: actions/cache@v4
+        id: cache
+        with:
+          path: build/windows-ffmpeg
+          key: ${{ steps.key.outputs.key }}
+          enableCrossOsArchive: true
+      - name: Cross-compile LGPL FFmpeg from the official source
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends mingw-w64 nasm
+          bash packaging/build-ffmpeg-windows.sh
+
+  build:
+    needs: ffmpeg
+    runs-on: windows-2022
+    permissions:
+      contents: write
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.9.5
+      - uses: actions/cache/restore@v4
+        with:
+          path: build/windows-ffmpeg
+          key: ${{ needs.ffmpeg.outputs.key }}
+          enableCrossOsArchive: true
+          fail-on-cache-miss: true
+      - name: Verify the FFmpeg build and preinstalled installer compiler
+        shell: powershell
+        run: ./packaging/prepare-windows-tools.ps1
+      - name: Build and verify desktop package
+        shell: powershell
+        run: ./packaging/build-windows.ps1
+      # Release assets do not count toward the Actions artifact storage quota.
+      - name: Upload verified installer to the existing draft
+        if: github.event_name == 'workflow_dispatch' && inputs.upload-draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: bash packaging/upload-draft.sh stock release/MarcadoresDePaula-Setup-*-stock.exe release/MarcadoresDePaula-Setup-*-stock.exe.sha256
+      - uses: actions/upload-artifact@v4
+        if: always()
+        continue-on-error: true
+        with:
+          name: MarcadoresDePaula-Windows-reports-stock
+          path: |
+            release/*verification*.json
+            release/*verification*.png
+            release/*.exe.sha256
+            release/setup-logs/*.log
+            release/diagnostics/**/*
+          if-no-files-found: warn
+      - uses: actions/upload-artifact@v4
+        if: always()
+        continue-on-error: true
+        with:
+          name: MarcadoresDePaula-Windows-x64-stock
+          path: |
+            release/MarcadoresDePaula-Setup-*.exe
+            release/MarcadoresDePaula-Setup-*.exe.sha256
+            release/default-model-verification.json
+            release/installed-default-verification.json
+            release/engine-setup-verification.json
+            release/engine-setup-verification.png
+            release/engine-recovery-verification.json
+            release/engine-recovery-verification.png
+            release/review-verification.json
+            release/review-verification.png
+            release/review-verification-dialog.png
+            release/setup-save-verification.json
+            release/setup-save-verification.png
+            release/*-pause-verification.*
+            release/*-resume-verification.*
+            release/review-verification-speakers.png
+            release/workspace-verification*
+            release/editor-verification*
+            release/processing-fault-verification*
+            release/preservation-verification*
+            release/windows-tools-verification.json
+            release/setup-logs/*.log
+          if-no-files-found: error
+          compression-level: 0
+      - name: Print FFmpeg provenance
+        if: always()
+        shell: powershell
+        run: if (Test-Path release/windows-tools-verification.json) { Get-Content release/windows-tools-verification.json }
+
+  cuda-engine:
+    runs-on: windows-2022
+    permissions:
+      contents: write
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install desktop dependencies
+        run: python -m pip install -r requirements-desktop.txt
+      - name: Verify the locked CUDA engine through Setup
+        shell: powershell
+        run: |
+          $env:TRANSCRIPT_DESK_DATA = Join-Path $env:LOCALAPPDATA 'Paula CUDA verification'
+          python run_app.py --setup-smoke-test --engine-device cuda --smoke-report release/engine-cuda-verification.json
+          if (Test-Path "$env:TRANSCRIPT_DESK_DATA/setup-logs") {
+            New-Item -ItemType Directory -Force release/setup-logs | Out-Null
+            Copy-Item "$env:TRANSCRIPT_DESK_DATA/setup-logs/*.log" release/setup-logs -Force
+          }
+          if ($LASTEXITCODE -ne 0) { throw 'CUDA engine installation or import check failed.' }
+      - name: Upload CUDA verification to the existing draft
+        if: github.event_name == 'workflow_dispatch' && inputs.upload-draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: bash packaging/upload-draft.sh cuda
+      - uses: actions/upload-artifact@v4
+        if: always()
+        continue-on-error: true
+        with:
+          name: MarcadoresDePaula-Windows-CUDA-verification
+          path: |
+            release/engine-cuda-verification.json
+            release/engine-cuda-verification.png
+            release/setup-logs/*.log
+          if-no-files-found: error

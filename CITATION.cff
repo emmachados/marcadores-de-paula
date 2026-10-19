@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use Marcadores de Paula in research, please cite it as below."
+type: software
+title: Marcadores de Paula
+abstract: >-
+  Desktop application for preparing research transcripts: media collection
+  with yt-dlp, local WhisperX transcription with word alignment and pyannote
+  speaker diarization, audio-linked transcript review, discourse annotation
+  with a project codebook, and export to TXT, DOCX, CSV, JSON, SRT, VTT,
+  Praat TextGrid and ELAN EAF.
+authors:
+  - given-names: Emma
+    family-names: Machado de Souza
+    affiliation: University of Salamanca
+    orcid: "https://orcid.org/0000-0003-4443-9739"
+version: 0.9.0
+license: GPL-3.0-or-later
+repository-code: "https://github.com/emmachados/marcadores-de-paula"
+keywords:
+  - transcription
+  - speaker diarization
+  - WhisperX
+  - discourse markers
+  - corpus linguistics
+  - ELAN
+  - Praat
