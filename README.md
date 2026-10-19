@@ -1,5 +1,7 @@
 # Marcadores de Paula
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23482888.svg)](https://doi.org/10.5281/zenodo.23482888)
+
 Marcadores de Paula is a desktop application for turning recordings into transcripts that can be checked and annotated for research. It downloads media from a link or takes local files, transcribes them on your own computer with WhisperX, aligns each word to the audio, and separates speakers with pyannote (speaker diarization). The transcript then opens in an editor where every turn plays back against the audio, speakers and wording can be corrected, and passages can be coded with a project codebook. Results export to plain text, Word, spreadsheets, subtitles, Praat and ELAN.
 
 It was written for research on discourse markers in spoken Spanish, so it applies no cleanup of its own to repetitions, fillers or restarts, and it keeps the unedited machine transcript beside the reviewed one.
@@ -133,6 +135,6 @@ Report problems through [GitHub issues](https://github.com/emmachados/marcadores
 
 ## Citation and licence
 
-If you use Marcadores de Paula in research, please cite it; [CITATION.cff](CITATION.cff) has the details, and GitHub's "Cite this repository" button formats them.
+If you use Marcadores de Paula in research, please cite it; [CITATION.cff](CITATION.cff) has the details, and GitHub's "Cite this repository" button formats them. Zenodo archives every release. The DOI [10.5281/zenodo.23482888](https://doi.org/10.5281/zenodo.23482888) covers all versions and resolves to the latest; version 0.9.0 is [10.5281/zenodo.23482889](https://doi.org/10.5281/zenodo.23482889).
 
 The source code is licensed under the [GNU General Public License, version 3 or later](LICENSE). Bundled and downloaded components keep their own licences, listed in [THIRD_PARTY.md](THIRD_PARTY.md). The speaker model's licence and access conditions are set by its authors on Hugging Face.
