@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from transcript_desk.worker import validate
+from transcript_desk.worker import download_format, validate
 
 
 def make_wav(path):
@@ -43,6 +43,17 @@ def test_real_download_only_worker_and_ffmpeg(tmp_path):
 def test_invalid_url_rejected_before_processing():
     with pytest.raises(ValueError, match="complete"):
         validate({"source_type": "url", "source": "file:///etc/passwd"})
+
+
+@pytest.mark.parametrize("url", ["https://www.tiktok.com/@user/video/1", "https://vm.tiktok.com/ZMabc/"])
+@pytest.mark.parametrize("save_video", [False, True])
+def test_tiktok_uses_the_audio_inside_the_video(url, save_video):
+    assert download_format({"source": url, "save_video": save_video}) == "best"
+
+
+def test_other_sites_keep_the_audio_only_format():
+    assert download_format({"source": "https://www.youtube.com/watch?v=x", "save_video": False}) == "bestaudio/best"
+    assert download_format({"source": "https://nottiktok.com/v/1", "save_video": True}) == "bestvideo*+bestaudio/best"
 
 
 def test_worker_ignores_modules_in_the_working_folder(tmp_path, qapp, monkeypatch):

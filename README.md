@@ -104,6 +104,7 @@ Two environment variables move these folders: `TRANSCRIPT_DESK_DATA` moves both,
 ## Limitations
 
 - Links must point to individual public videos. Playlists, sign-in and browser cookies are not supported, and a site can change in ways that break extraction.
+- TikTok links were tested on 20 October 2026 with public video posts. For TikTok the application takes the audio from the video file, because the separate audio track TikTok offers is the sound attached to the post, which can be a song in place of the clip's own audio. Photo posts have not been tested.
 - GPU transcription has not been tested. Minimum memory and processing-speed requirements have not been measured.
 - Subtitle cues are whole turns, so long turns may need splitting in a subtitle editor.
 - The interface is in English.

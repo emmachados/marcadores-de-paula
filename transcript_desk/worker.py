@@ -61,6 +61,14 @@ def validate(config):
         raise ValueError("Unknown processing device.")
 
 
+def download_format(config):
+    host = (urlparse(config["source"]).hostname or "").lower()
+    if host == "tiktok.com" or host.endswith(".tiktok.com"):
+        # TikTok's audio-only format is the post's attached sound, which can be a song instead of the clip's audio.
+        return "best"
+    return "bestvideo*+bestaudio/best" if config["save_video"] else "bestaudio/best"
+
+
 def acquire(config, work: Path):
     if config["source_type"] == "file":
         source = Path(config["source"])
@@ -87,7 +95,7 @@ def acquire(config, work: Path):
             pass  # The raised DownloadError is reported once at the process boundary.
 
     options = {
-        "format": "bestvideo*+bestaudio/best" if config["save_video"] else "bestaudio/best",
+        "format": download_format(config),
         "outtmpl": str(work / "source.%(ext)s"), "noplaylist": True,
         "progress_hooks": [hook], "logger": QuietLogger(), "quiet": True,
         "retries": 3, "socket_timeout": 30, "windowsfilenames": True,
