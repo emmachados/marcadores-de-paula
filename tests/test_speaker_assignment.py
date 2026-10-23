@@ -84,7 +84,7 @@ def test_single_speaker_worker_skips_diarizer_and_keeps_missing_word_timings(tmp
     diarize.DiarizationPipeline = forbidden
     monkeypatch.setitem(sys.modules, 'whisperx', whisperx)
     monkeypatch.setitem(sys.modules, 'whisperx.diarize', diarize)
-    monkeypatch.setitem(sys.modules, 'torch', SimpleNamespace())
+    monkeypatch.setitem(sys.modules, 'torch', SimpleNamespace(get_num_threads=lambda: 6, set_num_threads=lambda n: None))
     monkeypatch.setattr(worker, 'prepare_torch_libraries', lambda: None)
     monkeypatch.setattr(worker, 'cached_silero_vad', lambda: None)
     monkeypatch.setattr(worker.importlib.metadata, 'version', lambda _: 'test')

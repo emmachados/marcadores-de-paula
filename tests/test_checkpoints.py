@@ -50,7 +50,7 @@ def test_resume_reuses_media_transcription_and_alignment_after_stage_interruptio
     module.DiarizationPipeline = lambda *a, **kw: diarize
     monkeypatch.setitem(sys.modules, 'whisperx', whisperx)
     monkeypatch.setitem(sys.modules, 'whisperx.diarize', module)
-    monkeypatch.setitem(sys.modules, 'torch', SimpleNamespace())
+    monkeypatch.setitem(sys.modules, 'torch', SimpleNamespace(get_num_threads=lambda: 6, set_num_threads=lambda n: None))
     monkeypatch.setattr(worker, 'prepare_torch_libraries', lambda: None)
     monkeypatch.setattr(worker, 'cached_silero_vad', lambda: None)
     monkeypatch.setattr(worker.importlib.metadata, 'version', lambda _: 'fixture')

@@ -56,6 +56,39 @@ def test_other_sites_keep_the_audio_only_format():
     assert download_format({"source": "https://nottiktok.com/v/1", "save_video": True}) == "bestvideo*+bestaudio/best"
 
 
+def test_alignment_and_diarization_run_with_the_threads_silero_takes_away(tmp_path, monkeypatch):
+    from types import ModuleType, SimpleNamespace
+    import transcript_desk.worker as worker
+    threads, seen = [6], {}
+    def load_model(*a, **kw):
+        threads[0] = 1  # Silero's model module calls torch.set_num_threads(1) on import.
+        return SimpleNamespace(transcribe=lambda *a, **kw: {'language': 'es', 'segments': [{'start': 0, 'end': 1, 'text': 'bueno'}]})
+    def align(segments, *a, **kw):
+        seen['alignment'] = threads[0]
+        return {'segments': segments}
+    def diarize(*a, **kw):
+        seen['diarization'] = threads[0]
+        return SimpleNamespace(itertuples=lambda: iter([SimpleNamespace(start=0, end=1, speaker='A')]))
+    whisperx = ModuleType('whisperx')
+    whisperx.load_audio = lambda _: [0] * 16000
+    whisperx.load_model = load_model
+    whisperx.load_align_model = lambda **kw: (object(), {})
+    whisperx.align = align
+    module = ModuleType('whisperx.diarize')
+    module.DiarizationPipeline = lambda *a, **kw: diarize
+    monkeypatch.setitem(sys.modules, 'whisperx', whisperx)
+    monkeypatch.setitem(sys.modules, 'whisperx.diarize', module)
+    monkeypatch.setitem(sys.modules, 'torch', SimpleNamespace(get_num_threads=lambda: threads[0],
+                                                              set_num_threads=lambda n: threads.__setitem__(0, n)))
+    monkeypatch.setattr(worker, 'prepare_torch_libraries', lambda: None)
+    monkeypatch.setattr(worker, 'cached_silero_vad', lambda: None)
+    monkeypatch.setattr(worker.importlib.metadata, 'version', lambda _: 'test')
+    monkeypatch.setattr(worker, 'emit', lambda *a, **kw: None)
+    config = {'device': 'cpu', 'model': 'large-v3-turbo', 'diarize': True, 'speakers': 0}
+    worker.transcribe(config, tmp_path / 'unused.wav', {'warnings': []}, tmp_path)
+    assert seen == {'alignment': 6, 'diarization': 6}
+
+
 def test_worker_ignores_modules_in_the_working_folder(tmp_path, qapp, monkeypatch):
     from transcript_desk.runtime import child_environment
     monkeypatch.setenv('TRANSCRIPT_DESK_DATA', str(tmp_path / 'data'))

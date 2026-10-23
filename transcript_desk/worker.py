@@ -176,6 +176,7 @@ def transcribe(config, audio_path: Path, metadata: dict, output: Path, checkpoin
         from transcript_desk.media_dependencies import prepare_media_libraries
         prepare_media_libraries()
         import whisperx
+    torch_threads = torch.get_num_threads()
 
     device = config["device"]
     with timed_stage(metadata, emit, "audio_loading", "Loading transcription audio"):
@@ -216,6 +217,8 @@ def transcribe(config, audio_path: Path, metadata: dict, output: Path, checkpoin
         gc.collect()
         if device == "cuda":
             torch.cuda.empty_cache()
+        # Importing Silero sets one Torch thread for the whole process; alignment and diarization need the rest.
+        torch.set_num_threads(torch_threads)
         metadata["language"] = result.get("language")
         result["metadata"] = metadata
         result["speaker_names"] = {}
