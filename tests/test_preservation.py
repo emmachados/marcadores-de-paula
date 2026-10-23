@@ -60,7 +60,7 @@ def test_upgrade_preserves_legacy_bytes_settings_and_named_history(tmp_path):
     assert migrated['annotations'][0]['id'] == 'legacy-annotation'
     assert migrated['annotations'][0]['label_id']
     assert (backup / 'projects/1/reviewed.json').read_bytes() == raw
-    assert prepare_upgrade(root, prefs, version='0.9.1') is not None
+    assert prepare_upgrade(root, prefs, version='999.0.0') is not None
 
 
 def test_import_merges_without_overwrite_or_source_queue_changes(tmp_path):
