@@ -66,7 +66,8 @@ def run_processing_fault_check(application, window, report_path):
             events = []
             with ExitStack() as patches:
                 patches.enter_context(patch.dict(sys.modules, {'whisperx': whisperx, 'whisperx.diarize': diarize,
-                                                                'torch': SimpleNamespace()}))
+                                                                'torch': SimpleNamespace(get_num_threads=lambda: 1,
+                                                                                         set_num_threads=lambda n: None)}))
                 patches.enter_context(patch.object(worker, 'prepare_torch_libraries', lambda: None))
                 patches.enter_context(patch.object(worker, 'cached_silero_vad', lambda: None))
                 patches.enter_context(patch('transcript_desk.media_dependencies.prepare_media_libraries', lambda: None))
