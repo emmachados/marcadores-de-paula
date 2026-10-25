@@ -21,6 +21,9 @@ identifiers:
     value: 10.5281/zenodo.23482888
     description: All versions; resolves to the latest release.
   - type: doi
+    value: 10.5281/zenodo.23641717
+    description: Version 0.9.1.
+  - type: doi
     value: 10.5281/zenodo.23482889
     description: Version 0.9.0.
 license: GPL-3.0-or-later

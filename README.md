@@ -136,6 +136,6 @@ Report problems through [GitHub issues](https://github.com/emmachados/marcadores
 
 ## Citation and licence
 
-If you use Marcadores de Paula in research, please cite it; [CITATION.cff](CITATION.cff) has the details, and GitHub's "Cite this repository" button formats them. Zenodo archives every release. The DOI [10.5281/zenodo.23482888](https://doi.org/10.5281/zenodo.23482888) covers all versions and resolves to the latest; version 0.9.0 is [10.5281/zenodo.23482889](https://doi.org/10.5281/zenodo.23482889).
+If you use Marcadores de Paula in research, please cite it; [CITATION.cff](CITATION.cff) has the details, and GitHub's "Cite this repository" button formats them. Zenodo archives every release. The DOI [10.5281/zenodo.23482888](https://doi.org/10.5281/zenodo.23482888) covers all versions and resolves to the latest; version 0.9.1 is [10.5281/zenodo.23641717](https://doi.org/10.5281/zenodo.23641717) and version 0.9.0 is [10.5281/zenodo.23482889](https://doi.org/10.5281/zenodo.23482889).
 
 The source code is licensed under the [GNU General Public License, version 3 or later](LICENSE). Bundled and downloaded components keep their own licences, listed in [THIRD_PARTY.md](THIRD_PARTY.md). The speaker model's licence and access conditions are set by its authors on Hugging Face.
