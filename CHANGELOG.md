@@ -2,9 +2,10 @@
 
 From 0.9.0, the Windows installer and the Mac disk image are attached to each [GitHub release](https://github.com/emmachados/marcadores-de-paula/releases), with SHA-256 checksums and the verification records from the builds that produced them. On Windows, install a newer version over an older one; on a Mac, replace the application in Applications. The queue, recording folders and saved reviews are kept.
 
-## 0.9.1 (23 October 2026)
+## 0.9.1 (25 October 2026)
 
 - TikTok links now download the audio recorded in the clip. Earlier versions took TikTok's separate audio track, which for a post with a song attached is the song, so the transcript did not match the video.
+- With the CPU engine, word alignment and speaker separation now run on as many threads as Torch chooses at start-up, six on an Apple M5 Pro. In 0.9.0, loading the voice activity model set Torch to a single thread for the rest of each job. On that machine, speaker separation of a five-minute excerpt now takes 159 seconds instead of 402.
 
 ## 0.9.0 (19 October 2026)
 
