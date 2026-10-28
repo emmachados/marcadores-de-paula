@@ -38,7 +38,7 @@ def test_chronological_docx_follows_text_layout(tmp_path, result, timestamps, pa
             parts.append(('\n\n' if parts else '') + p.text + '\n')
         else:
             parts.append(('' if parts[-1].endswith('\n') else '\n\n') + p.text)
-    assert ''.join(parts) + '\n' == (tmp_path / 'transcript.txt').read_text()
+    assert ''.join(parts) + '\n' == (tmp_path / 'transcript.txt').read_text(encoding='utf-8')
 
 
 def test_annotation_tiers_handle_overlap_without_expanding_spans(tmp_path, result):
