@@ -188,6 +188,21 @@ class MainWindow(QMainWindow):
             self.format_menu.addAction(action)
         self.format_button.setMenu(self.format_menu)
         output_layout.addWidget(self.format_button)
+        self.layout_button = QToolButton()
+        self.layout_button.setText("Preferred text layout…")
+        self.layout_button.setPopupMode(QToolButton.InstantPopup)
+        self.layout_menu = QMenu(self)
+        self.layout_actions = {}
+        for key, title, checked in (("timestamps", "Timestamps in TXT / DOCX", True),
+                                    ("grouped", "Group text by speaker", False),
+                                    ("paragraphs", "Keep turn paragraphs", True)):
+            action = QAction(title, self)
+            action.setCheckable(True)
+            action.setChecked(checked)
+            self.layout_actions[key] = action
+            self.layout_menu.addAction(action)
+        self.layout_button.setMenu(self.layout_menu)
+        output_layout.addWidget(self.layout_button)
         left_layout.addWidget(outputs)
         speech = QGroupBox("Transcription")
         form = QFormLayout(speech)
@@ -229,6 +244,7 @@ class MainWindow(QMainWindow):
         self.diarize.toggled.connect(self.speakers.setEnabled)
         self.want_transcript.toggled.connect(speech.setEnabled)
         self.want_transcript.toggled.connect(self.format_button.setEnabled)
+        self.want_transcript.toggled.connect(self.layout_button.setEnabled)
         left_layout.addWidget(speech)
         left_layout.addWidget(label("No wording cleanup is applied. Automatic recognition can still omit fillers, repetitions and false starts. Listen and review before analysis.", True))
         left_layout.addWidget(label("Output folder"))
@@ -593,6 +609,7 @@ class MainWindow(QMainWindow):
                 "transcribe": self.want_transcript.isChecked(), "save_audio": self.want_audio.isChecked(),
                 "save_video": self.want_video.isChecked(), "diarize": self.diarize.isChecked(),
                 "speakers": self.speakers.value(), "formats": self.formats(), "device": self.device,
+                "text_layout": {key: action.isChecked() for key, action in self.layout_actions.items()},
                 "review_before_export": True}
 
     def choose_model_pack(self):

@@ -28,7 +28,7 @@ Speaker separation uses the pyannote [speaker-diarization-community-1](https://h
 
 <img src="docs/images/add-recordings.png" alt="The Add recordings panel with the default model" width="280" align="right">
 
-Choose Add recordings, then paste video links (one per line) or select local audio and video files. For each batch, choose what to keep (video, lossless FLAC audio, transcript), the model, the language, whether to identify speakers and how many there are.
+Choose Add recordings, then paste video links (one per line) or select local audio and video files. For each batch, choose what to keep (video, lossless FLAC audio, transcript), the model, the language, whether to identify speakers and how many there are. Preferred export formats… and Preferred text layout… set where the Export dialog starts for those recordings; the layout covers timestamps, grouping by speaker and paragraph breaks in TXT and DOCX.
 
 The default model is large-v3-turbo, a version of Whisper large-v3 whose decoder has 4 layers in place of 32, so it runs faster; the full large-v3 is the other choice. Both can detect the language automatically. The speaker count is detected automatically unless you set it; setting it to 1 skips the speaker model altogether. Start queue processes recordings one after another, and a failed recording does not stop the rest.
 

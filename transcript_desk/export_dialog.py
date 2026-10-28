@@ -86,8 +86,11 @@ class ExportDialog(QDialog):
         row = QHBoxLayout()
         self.times, self.grouped, self.paragraphs, self.separate = (QCheckBox(label) for label in
             ('Timestamps in TXT / DOCX', 'Group text by speaker', 'Keep turn paragraphs', 'One folder per speaker'))
-        self.times.setChecked(True)
-        self.paragraphs.setChecked(True)
+        layout_choice = (getattr(window, 'result_job', None) or {}).get('config', {}).get('text_layout')
+        layout_choice = layout_choice if isinstance(layout_choice, dict) else {}
+        for key, widget, default in (('timestamps', self.times, True), ('grouped', self.grouped, False),
+                                     ('paragraphs', self.paragraphs, True)):
+            widget.setChecked(layout_choice[key] if type(layout_choice.get(key)) is bool else default)
         for widget in (self.times, self.grouped, self.paragraphs, self.separate):
             row.addWidget(widget)
         layout.addLayout(row)

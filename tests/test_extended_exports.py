@@ -2,6 +2,7 @@ import csv
 import json
 from xml.etree import ElementTree as ET
 
+import pytest
 from docx import Document
 
 from transcript_desk.annotations import create_annotation, create_range_annotation, create_time_annotation, is_current
@@ -22,6 +23,22 @@ def test_untimed_speaker_export_and_filtered_concordance(tmp_path, result):
     assert len(json.loads((tmp_path / 'transcript.json').read_text())['segments']) == 2
     assert len(list(csv.DictReader((tmp_path / 'concordance.csv').open(encoding='utf-8-sig')))) == 1
     assert any('Last question.' in p.text for p in Document(tmp_path / 'transcript.docx').paragraphs)
+
+
+@pytest.mark.parametrize('timestamps, paragraphs', [(False, False), (False, True), (True, True)])
+def test_chronological_docx_follows_text_layout(tmp_path, result, timestamps, paragraphs):
+    result['segments'].insert(2, {'start': 3.5, 'end': 3.9, 'speaker': 'SPEAKER_01', 'text': 'Second answer.'})
+    export_result(result, tmp_path, ['TXT', 'DOCX'], options={
+        'timestamps': timestamps, 'grouped': False, 'paragraphs': paragraphs})
+    body = Document(tmp_path / 'transcript.docx').paragraphs[2:]
+    assert [p.text for p in body if p.style.name.startswith('Heading')] == ['Interviewer', 'Participant', 'Unassigned']
+    parts = []
+    for p in body:
+        if p.style.name.startswith('Heading'):
+            parts.append(('\n\n' if parts else '') + p.text + '\n')
+        else:
+            parts.append(('' if parts[-1].endswith('\n') else '\n\n') + p.text)
+    assert ''.join(parts) + '\n' == (tmp_path / 'transcript.txt').read_text()
 
 
 def test_annotation_tiers_handle_overlap_without_expanding_spans(tmp_path, result):

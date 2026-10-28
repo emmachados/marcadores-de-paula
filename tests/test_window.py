@@ -32,6 +32,17 @@ def test_batch_input_deduplicates_and_snapshots_options(qtbot, tmp_path):
     widget.grab().save(str(tmp_path / "batch.png"))
 
 
+def test_text_layout_choice_is_kept_with_each_recording(qtbot, tmp_path):
+    widget = window(qtbot, tmp_path)
+    widget.layout_actions["timestamps"].setChecked(False)
+    widget.layout_actions["grouped"].setChecked(True)
+    widget.urls.setPlainText("https://example.com/one")
+    widget.add_links.click()
+    assert widget.store.jobs[0]["config"]["text_layout"] == {"timestamps": False, "grouped": True, "paragraphs": True}
+    widget.want_transcript.setChecked(False)
+    assert not widget.layout_button.isEnabled()
+
+
 def test_bundled_model_pack_default_preserves_queued_choices(qtbot, tmp_path, monkeypatch):
     import transcript_desk.window as module
     folder = tmp_path / "models/example-pack"

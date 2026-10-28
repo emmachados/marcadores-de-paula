@@ -2,6 +2,11 @@
 
 From 0.9.0, the Windows installer and the Mac disk image are attached to each [GitHub release](https://github.com/emmachados/marcadores-de-paula/releases), with SHA-256 checksums and the verification records from the builds that produced them. On Windows, install a newer version over an older one; on a Mac, replace the application in Applications. The queue, recording folders and saved reviews are kept.
 
+## Unreleased
+
+- Add recordings has a Preferred text layout… menu next to Preferred export formats…. Its three choices, timestamps, grouping by speaker and paragraph breaks, are kept with each recording and set the Export dialog's switches when it opens.
+- A DOCX exported in conversation order now has a speaker heading only where the speaker changes, with timestamps and paragraph breaks as in the TXT. Earlier versions wrote a heading above every segment, so one speaker's turn could appear under several identical headings, and ignored Keep turn paragraphs.
+
 ## 0.9.1 (25 October 2026)
 
 - TikTok links now download the audio recorded in the clip. Earlier versions took TikTok's separate audio track, which for a post with a song attached is the song, so the transcript did not match the video.

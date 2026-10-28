@@ -83,12 +83,20 @@ def add_document_content(document, result, options):
                 document.add_paragraph(paragraph)
     else:
         from docx.enum.text import WD_COLOR_INDEX
-        for row, segment in enumerate(result['segments']):
-            title = speaker_name(segment.get('speaker'), result.get('speaker_names', {}))
+        # Same layout as the TXT and the preview: a heading only where the speaker changes.
+        rows = sorted(enumerate(result['segments']), key=lambda item: (item[1]['start'], item[1]['end'], item[0]))
+        previous, paragraph = object(), None
+        for row, segment in rows:
+            if segment.get('speaker') != previous:
+                document.add_heading(speaker_name(segment.get('speaker'), result.get('speaker_names', {})), level=2)
+                paragraph = document.add_paragraph()
+            elif options.get('paragraphs', True):
+                paragraph = document.add_paragraph()
+            else:
+                paragraph.add_run(' ')
+            previous = segment.get('speaker')
             if options.get('timestamps', True):
-                title = timestamp(segment['start'], '.') + '  ' + title
-            document.add_heading(title, level=2)
-            paragraph = document.add_paragraph()
+                paragraph.add_run(f"[{timestamp(segment['start'], '.')} – {timestamp(segment['end'], '.')}] ")
             annotations = [a for a in result.get('annotations', []) if a['status'] != 'needs review' and
                            (a['segment'] == row or any(span['turn_id'] == segment.get('turn_id') for span in a.get('spans', [])))]
             if options.get('marked_passages') and annotations:

@@ -120,6 +120,20 @@ def run_workspace_check(application, window, report_path):
             export.close()
             export.deleteLater()
             checked('eight transcript exports with filtered annotation layers and counts')
+            for key, action in window.layout_actions.items():
+                action.setChecked(key == 'grouped')
+            window.result_job['config']['text_layout'] = window.options()['text_layout']
+            export = ExportDialog(window)
+            assert (export.times.isChecked(), export.grouped.isChecked(), export.paragraphs.isChecked()) == (False, True, False)
+            export.grouped.setChecked(False)
+            destination = window.workspace.export_to(folder / 'exports-layout', ['TXT', 'DOCX'], export.options())
+            export.deleteLater()
+            from docx import Document
+            headings = [p.text for p in Document(destination / 'transcript.docx').paragraphs if p.style.name.startswith('Heading')]
+            rows = sorted(window.result['segments'], key=lambda s: (s['start'], s['end']))
+            assert len(headings) == sum(i == 0 or s.get('speaker') != rows[i - 1].get('speaker') for i, s in enumerate(rows))
+            assert '00:00' not in (destination / 'transcript.txt').read_text(encoding='utf-8')
+            checked('recording text layout reaches the export switches; DOCX headings at speaker changes')
             window.tabs.setCurrentIndex(0)
             window.workspace.audio.expand.setChecked(True)
             window.workspace.audio.load_waveform()

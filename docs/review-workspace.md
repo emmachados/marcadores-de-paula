@@ -4,7 +4,7 @@ All views, edits and exports use the timed transcript. Each turn has a stable `t
 
 ## Speaker text
 
-The Speaker text tab shows one speaker or all of them. With Group by speaker on, Show timestamps and Keep turn paragraphs can be switched independently; with both off, each speaker's turns run as continuous text in chronological order. Copy text copies the selection, or the whole view when nothing is selected. Go to source turn opens the timed turn for editing and playback. Export this view writes TXT and DOCX with the same layout.
+The Speaker text tab shows one speaker or all of them. With Group by speaker on, everything a speaker said appears under one heading, and speakers follow the order in which they first speak. With it off, the conversation keeps its order and consecutive turns by the same speaker share one heading. In either layout, Show timestamps and Keep turn paragraphs can be switched independently; with both off, the turns under each heading run as continuous text in chronological order. Copy text copies the selection, or the whole view when nothing is selected. Go to source turn opens the timed turn for editing and playback. Export this view writes TXT and DOCX with the same layout.
 
 ## Find and replace
 
@@ -32,7 +32,7 @@ Play interval stops at the end of the interval, or repeats it when Loop is on. C
 
 ## Export
 
-Export…, also Review → Export options… (Ctrl+Shift+E), previews the text and starts from the recording's preferred formats. Speakers, annotation categories and statuses can be selected, and the text can be written as continuous speaker text, with or without timestamps and paragraph breaks, or as one folder per speaker. Timed formats always use the source intervals. Presets save these choices; a speaker preset from another project asks for its speakers to be matched to this one.
+Export…, also Review → Export options… (Ctrl+Shift+E), previews the text and starts from the formats and text layout chosen for the recording in Add recordings. Speakers, annotation categories and statuses can be selected, and the text can be written as continuous speaker text, with or without timestamps and paragraph breaks, or as one folder per speaker. The DOCX has the same layout as the TXT and the preview. Timed formats always use the source intervals. Presets save these choices; a speaker preset from another project asks for its speakers to be matched to this one.
 
 EAF and TextGrid exports can include annotation tiers. Overlapping annotations go to separate tiers, a multi-turn annotation uses each speaker's own passage and interval, and annotations marked for review are left out of the timed tiers. Overlapping turns of one speaker still need EAF or JSON, since a TextGrid tier cannot hold them. The annotated DOCX highlights the selected passages in transcript order and lists the annotation records at the end.
 

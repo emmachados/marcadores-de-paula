@@ -46,7 +46,7 @@ def test_multiturn_document_marks_source_passages():
     document = Document()
     add_document_content(document, result, {"marked_passages": True})
     for segment in result["segments"]:
-        paragraph = next(p for p in document.paragraphs if p.text == segment["text"])
+        paragraph = next(p for p in document.paragraphs if p.text.endswith(segment["text"]))
         assert any(run.font.highlight_color is not None for run in paragraph.runs)
 
 
@@ -125,12 +125,14 @@ def test_bookmark_action_preserves_a_live_text_draft(qtbot, tmp_path, monkeypatc
     assert window.result["bookmarks"][0]["name"] == "Here"
 
 
-def export_dialog(qtbot, saved):
+def export_dialog(qtbot, saved, config=None):
     from transcript_desk.export_dialog import ExportDialog
     parent = QWidget()
     qtbot.addWidget(parent)
     parent.result = source()
     parent.settings = SimpleNamespace(value=lambda name, default: json.dumps(saved))
+    if config is not None:
+        parent.result_job = {"config": config}
     dialog = ExportDialog(parent)
     qtbot.addWidget(dialog)
     return dialog
@@ -150,6 +152,17 @@ def test_saved_export_preset_restores_speaker_filter(qtbot):
     assert dialog.preview.toPlainText() == "Bea\nB second tail"
     assert [name for name, box in dialog.formats.items() if box.isChecked()] == ["TXT"]
     assert not dialog.preview_timer.isActive()
+
+
+@pytest.mark.parametrize("layout, expected", [
+    ({"timestamps": False, "grouped": True, "paragraphs": False}, (False, True, False)),
+    (None, (True, False, True)),
+    ({"timestamps": "no", "grouped": 1}, (True, False, True))])
+def test_recording_text_layout_sets_export_switches(qtbot, layout, expected):
+    dialog = export_dialog(qtbot, {}, {"text_layout": layout})
+    assert (dialog.times.isChecked(), dialog.grouped.isChecked(), dialog.paragraphs.isChecked()) == expected
+    if layout and layout.get("timestamps") is False:
+        assert dialog.preview.toPlainText() == "Ana\nA first end\n\nBea\nB second tail"
 
 
 def test_unknown_saved_speakers_require_an_explicit_selection(qtbot):
